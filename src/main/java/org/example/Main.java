@@ -1,17 +1,33 @@
 package org.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    static void main() {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        IO.println(String.format("Hello and welcome!"));
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            IO.println("i = " + i);
+/**
+ * Muestra por consola todas las marcas almacenadas en la tabla {@code brands}.
+ */
+public class Main {
+
+    static void main() {
+        String sql = "SELECT id, name, country FROM brands ORDER BY id";
+
+        try (Connection conn = ConexionBD.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            System.out.println("ID | NOMBRE | PAIS");
+            System.out.println("-".repeat(55));
+
+            while (rs.next()) {
+                System.out.println(rs.getInt("id") + " | "
+                        + rs.getString("name") + " | "
+                        + rs.getString("country"));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al consultar las marcas: " + e.getMessage());
         }
     }
 }
